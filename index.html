@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>book shop</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body onload="onInit()">
+
+    <h1 class="page-title">Fr🐸gi's Book Shop</h1>
+
+    <section>
+        <form onsubmit="onAddBook(event)" class="new-book">
+            <input type="text" placeholder="Enter the new book's name" class="new-book-name" />
+            <input type="text" placeholder="Enter the new book's price" class="new-book-price" />
+            <button class="new-book-btn">Add a new Book</button>
+            <p class="warning">Please enter proper input</p>
+        </form>
+    </section>
+
+    <section class="filter">
+        <label>
+            Max price:
+            <input class="filter-by-max-price" type="range" min="0" max="100"
+                onchange="this.title = this.value; onSetFilterBy({maxPrice: +this.value})" />
+        </label>
+        <label>
+            Min rating:
+            <input class="filter-by-min-rate" type="range" min="0" max="10"
+                onchange="this.title = this.value; onSetFilterBy({minRate: +this.value})" />
+        </label>
+        <input type="text" placeholder="search a keyword" onkeyup="onSetSearchByTitle(this.value)" />
+    </section>
+
+    <table>
+        <thead>
+            <th>Id</th>
+            <th>Img</th>
+            <th class="title" onclick="onSetSortBy(this.innerText)">Title</th>
+            <th class="price" onclick="onSetSortBy(this.innerText)">Price</th>
+            <th colspan="3">Actions</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="paging">
+        <button class="prev" value="-1" onclick="onPageChange(+this.value)">Prev</button>
+        <button class="next" value="1" onclick="onPageChange(+this.value)">Next</button>
+    </div>
+
+    <div class="modal modal-hide modal-update ">
+        <p></p>
+    </div>
+
+    <div class="modal modal-hide modal-details">
+        <button class="modal-details-close-btn" onclick="onHideBookDetails()">X</button>
+        <h1></h1>
+        <img src="" alt="" />
+        <h2>Price: $<span></span></h2>
+        <p></p>
+        <div class="rating-container">
+            <button class="rating-btn" value="-1" onclick="onChangeRating(this.value)">-</button>
+            <div class="rating"></div>
+            <button class="rating-btn" value="1" onclick="onChangeRating(this.value)">+</button>
+        </div>
+    </div>
+
+    <script src="js/services/util.service.js"></script>
+    <script src="js/services/storage.service.js"></script>
+    <script src="js/services/modal.service.js"></script>
+    <script src="js/book-shop.controller.js"></script>
+</body>
+
+</html>
