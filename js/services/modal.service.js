@@ -7,8 +7,8 @@ const PAGE_SIZE = 5
 var gBooks
 var gRegex
 var gPage = { page: 0, maxPage: 0 }
-var gFilterBy = { maxPrice: 0, minRate: 0 }
-var gSortBy = { title: 1, price: 1 }
+var gSortBy = { title: -1, price: -1 }
+var gFilterBy = {}
 
 _createBooks()
 
@@ -26,27 +26,26 @@ function getBooksForDisplay() {
 }
 
 function removeBook(bookId) {
-    const bookIdx = getIdxBookById(bookId)
-    gBooks.splice(bookIdx, 1)
+    const bookIdx = gBooks.findIndex(book => book.id === bookId)
+    const book = gBooks.splice(bookIdx, 1)[0]
     saveToStorage(KEY_BOOKS, gBooks)
     gPage.maxPage = parseInt(gBooks.length / PAGE_SIZE)
-    return gPage
+    return book
 }
 
 function addBook(title, price) {
     if (!title || !price) return
-    gBooks.unshift(_createBook(title, price))
+    const book = _createBook(title, price)
+    gBooks.unshift(book)
     saveToStorage(KEY_BOOKS, gBooks)
+    return book
 }
 
 function updateBook(bookId, newPrice) {
-    const bookIdx = getIdxBookById(bookId)
+    const bookIdx = gBooks.findIndex(book => book.id === bookId)
     gBooks[bookIdx].price = newPrice
     saveToStorage(KEY_BOOKS, gBooks)
-}
-
-function getIdxBookById(bookId) {
-    return gBooks.findIndex(book => book.id === bookId)
+    return gBooks[bookIdx]
 }
 
 function getBookById(bookId) {
@@ -57,12 +56,13 @@ function getBookById(bookId) {
 
 function changeRating(rating) {
     const activeBookId = loadFromStorage(KEY_BOOK).id
-    const activebookIdx = getIdxBookById(activeBookId)
-    const activeBook = gBooks[activebookIdx]
+    const activeBookIdx = gBooks.findIndex(book => book.id === activeBookId)
+
+    const activeBook = gBooks[activeBookIdx]
     if (activeBook.rate + rating >= 0 && activeBook.rate + rating <= 10) {
         activeBook.rate += rating
         saveToStorage(KEY_BOOKS, gBooks)
-        saveToStorage(KEY_BOOK, gBooks[activebookIdx])
+        saveToStorage(KEY_BOOK, gBooks[activeBookIdx])
     }
     return
 }

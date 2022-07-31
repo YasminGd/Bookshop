@@ -40,9 +40,13 @@ tr:hover {
     width: 377px;
 }
 
+.img {
+    width: 150px;
+}
+
 
 img {
-    width: 100px;
+    height: 150px;
     border-radius: 0.2rem;
 }
 
@@ -117,11 +121,11 @@ button:disabled {
 }
 
 .modal-update {
-    width: 200px;
+    width: 250px;
     padding: 15px;
     color: #edf6f9;
     background-color: #006d77;
-    right: 89%;
+    right: 86.5%;
     bottom: 1%;
 }
 
@@ -152,7 +156,7 @@ button:disabled {
 .filter {
     display: flex;
     justify-content: space-between;
-    width: 1050px;
+    width: 1200px;
     margin: 30px;
 }
 
@@ -192,4 +196,3 @@ button:disabled {
     width: 100px;
     font-size: 30px;
 }
-

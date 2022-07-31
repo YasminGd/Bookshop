@@ -1,11 +1,10 @@
 'use strict'
-//controller
+
 function onInit() {
     renderFilterByQueryStringParams()
     renderBooks()
-    renderModal()
-    const page = getPageDetails()
-    renderButtons(page)
+    renderModalOnPageLoad()
+    renderButtons()
 }
 
 function renderBooks() {
@@ -17,33 +16,45 @@ function renderBooks() {
     }
 
     const booksHTML = books.map(book => `
-    <tr>
-    <td>${book.id}</td>
-    <td>
-        <img src="img/${book.img}.jpg"/>
-    </td>
-    <td>${book.title}</td>
-    <td>$${book.price}</td>
-    <td> <button onclick="onShowBookDetails('${book.id}')"> Read </button> </td>
-    <td> 
-        <form onsubmit="onUpdateBook('${book.id}', event)">
-            <input type="text" class="update-price ${book.id}">
-            <button> Update </button> 
-        </form>
-    </td>
-    <td> <button onclick="onRemoveBook('${book.id}')"> Delete </button> </td>
-    </tr>`)
+    <article>
+        <tr>
+            <td>
+                ${book.id}
+            </td>
+            <td>
+                <img onerror="this.src='img/1.jpg'" src="img/${book.img}.jpg"/>
+            </td>
+            <td>
+                ${book.title}
+            </td>
+            <td>
+                $${book.price}
+            </td>
+            <td>
+                <button onclick="onShowBookDetails('${book.id}')"> Read </button> 
+            </td>
+            <td> 
+                <form onsubmit="onUpdateBook('${book.id}', event)">
+                    <input type="text" class="update-price ${book.id}">
+                    <button> Update </button> 
+                </form>
+            </td>
+            <td>
+                <button onclick="onRemoveBook('${book.id}')"> Delete </button> 
+            </td>
+        </tr>
+    </article>`)
     elBooks.innerHTML = booksHTML.join('')
 }
 
-function renderModal() {
-    if (getActiveBook()) onHideBookDetails(getActiveBook().id)
+function renderModalOnPageLoad() {
+    if (getActiveBook()) onShowBookDetails(getActiveBook().id)
 }
 
 function onRemoveBook(bookId) {
-    const page = removeBook(bookId)
-    renderButtons(page)
-    renderBookUpdateModal('Book removed')
+    const book = removeBook(bookId)
+    flashMsg(`Book Id ${book.id} removed`)
+    renderButtons()
     renderBooks()
 }
 
@@ -59,11 +70,12 @@ function onAddBook(ev) {
         setTimeout(() => elWarning.style.display = 'none', 2000)
         return
     }
-    addBook(elName.value, +elPrice.value)
-    renderBookUpdateModal('Book Added')
+
+    const book = addBook(elName.value, +elPrice.value)
+    flashMsg(`Book Id ${book.id} added`)
     renderBooks()
     elName.value = ''
-    elPrice.value =''
+    elPrice.value = ''
 }
 
 function onUpdateBook(bookId, ev) {
@@ -71,14 +83,14 @@ function onUpdateBook(bookId, ev) {
     const newPrice = +document.querySelector(`.${bookId}`).value
 
     if (!newPrice) return
-    updateBook(bookId, newPrice)
-    renderBookUpdateModal('Book Updated')
+    const book = updateBook(bookId, newPrice)
+    flashMsg(`Book price updated to $${book.price}`)
     renderBooks()
 }
 
-function renderBookUpdateModal(massage) {
+function flashMsg(msg) {
     const elBookModal = document.querySelector('.modal-update')
-    elBookModal.innerText = massage
+    elBookModal.innerText = msg
     elBookModal.classList.remove('modal-hide')
     setTimeout(() => elBookModal.classList.add('modal-hide'), 2000)
 }
@@ -137,9 +149,6 @@ function renderFilterByQueryStringParams() {
         maxPrice: +queryStringParams.get('maxPrice') || 100,
         minRate: +queryStringParams.get('minRate') || 0
     }
-    console.log(filterBy);
-
-    if (!filterBy.maxPrice && !filterBy.minRate) return
 
     document.querySelector('.filter-by-max-price').value = filterBy.maxPrice
     document.querySelector('.filter-by-min-rate').value = filterBy.minRate
@@ -159,22 +168,4 @@ function renderButtons() {
 
     elNext.disabled = page.page === page.maxPage ? true : false
     elPrev.disabled = page.page === 0 ? true : false
-
-    // if (page.page === page.maxPage && !page.page) {
-    //     elNext.disabled = true
-    //     elPrev.disabled = true
-    // }
-    // else if (page.page === page.maxPage) {
-    //     elNext.disabled = true
-    //     elPrev.disabled = false
-    // }
-    // else if (page.page === 0) {
-    //     elNext.disabled = false
-    //     elPrev.disabled = true
-    // }
-    // else {
-    //     console.log('the rest');
-    //     elNext.disabled = false
-    //     elPrev.disabled = false
-    // }
 }
